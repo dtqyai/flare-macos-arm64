@@ -1,0 +1,37 @@
+[
+  {
+    "name": "SDL",
+    "repository": "libsdl-org/SDL",
+    "ref": "release-2.32.10",
+    "url": "https://codeload.github.com/libsdl-org/SDL/tar.gz/refs/tags/release-2.32.10",
+    "sha256": "03f9d7c191a837525c9cda6406af2f2e48be02b5e7eb03d949cc9f1e9ca41c8b"
+  },
+  {
+    "name": "SDL_image",
+    "repository": "libsdl-org/SDL_image",
+    "ref": "release-2.8.8",
+    "url": "https://codeload.github.com/libsdl-org/SDL_image/tar.gz/refs/tags/release-2.8.8",
+    "sha256": "2bd2c17cab3744ebfe7351ded8c70dc2078d8c7c24eb9f4ebb1b26a623e2a747"
+  },
+  {
+    "name": "SDL_mixer",
+    "repository": "libsdl-org/SDL_mixer",
+    "ref": "release-2.8.1",
+    "url": "https://codeload.github.com/libsdl-org/SDL_mixer/tar.gz/refs/tags/release-2.8.1",
+    "sha256": "63804b4b2ba503865c0853f102231aeff489b1dfc6dea4750a69e2a8ef54b2bb"
+  },
+  {
+    "name": "freetype",
+    "repository": "freetype/freetype",
+    "ref": "VER-2-14-1",
+    "url": "https://codeload.github.com/freetype/freetype/tar.gz/refs/tags/VER-2-14-1",
+    "sha256": "44bd69d1f0750603410cfd4f26f1c5523c5a3a087a2dfa8639b757dc7c6677be"
+  },
+  {
+    "name": "SDL_ttf",
+    "repository": "libsdl-org/SDL_ttf",
+    "ref": "release-2.24.0",
+    "url": "https://codeload.github.com/libsdl-org/SDL_ttf/tar.gz/refs/tags/release-2.24.0",
+    "sha256": "2c45241a56203a59d66ec6b4eae9457e5675fc609376566a257391fd29d341a2"
+  }
+]
