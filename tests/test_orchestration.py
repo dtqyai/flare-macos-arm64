@@ -74,3 +74,10 @@ class MachOVersionTests(unittest.TestCase):
         self.assertEqual(verify.minimum_versions(text), ['15.0'])
     def test_legacy_minimum_version_is_checked(self):
         self.assertEqual(verify.minimum_versions('Load command 0\n cmd LC_VERSION_MIN_MACOSX\n version 14.0\n sdk 15.0\n'), ['14.0'])
+
+class ReleaseTitleTests(unittest.TestCase):
+    def test_title_is_upstream_version(self):
+        self.assertEqual(publish.release_title({'engine_version': '1.15.66'}), '1.15.66')
+    def test_invalid_upstream_version_is_rejected(self):
+        with self.assertRaises(ValueError):
+            publish.release_title({'engine_version': 'build-abc'})

@@ -6,7 +6,7 @@
 
 ## 下载与运行
 
-在 Releases 页面打开最近一次预发布，下载 `Flare-AppleSilicon.zip`，解压后打开 `Flare.app`，或将应用拖到“应用程序”。
+在 Releases 页面打开最新版本，下载 `Flare-AppleSilicon.zip`，解压后打开 `Flare.app`，或将应用拖到“应用程序”。
 
 - Apple Silicon（M 系列芯片），macOS 15.0 及以上。
 - 包含 Empyrean Campaign、中文资源和运行库，不需要安装 Homebrew 或 Rosetta。
@@ -17,6 +17,8 @@
 ## 自动构建
 
 每天 UTC 02:23（北京时间/新加坡时间 10:23）检查官方 [引擎](https://github.com/flareteam/flare-engine) 和 [游戏资源](https://github.com/flareteam/flare-game) 的最新提交。
+
+Release 名称直接使用上游引擎版本号（例如 `1.15.66`），不设置 GitHub Pre-release 标记。内部 Git 标签保留提交构建标识，以区分同一上游版本的不同构建；此显示方式不改变跟随 master 的来源。
 
 两个上游提交与本项目提交共同组成构建标识。该标识已有完整公开发布包时跳过编译，否则在 GitHub 的 `macos-15` arm64 构建机上构建。先上传草稿 Release，重新下载校验后才公开；失败草稿可通过重跑恢复。
 

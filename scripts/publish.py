@@ -3,6 +3,7 @@
 import hashlib
 import json
 import os
+import re
 from pathlib import Path
 import subprocess
 import tempfile
@@ -26,11 +27,19 @@ def verify_hashes(directory):
                 raise RuntimeError('Checksum mismatch: ' + name)
 
 
+def release_title(metadata):
+    version = metadata["engine_version"]
+    if not re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+", version):
+        raise ValueError("Invalid upstream engine version")
+    return version
+
+
 def main():
     repo, tag = os.environ['GITHUB_REPOSITORY'], os.environ['RELEASE_TAG']
     dist = Path('dist')
     verify_hashes(dist)
     metadata = json.loads((dist / 'BUILD-INFO.json').read_text())
+    title = release_title(metadata)
     notes = dist / 'release-notes.md'
     notes.write_text(
         'Unofficial Apple Silicon build of Flare: Empyrean Campaign.\n\n'
@@ -56,8 +65,8 @@ def main():
     if release and not release.get('draft'):
         raise RuntimeError('Existing public release is incomplete; refusing to replace its assets')
     if not release:
-        run('gh', 'release', 'create', tag, '--repo', repo, '--draft', '--prerelease',
-            '--target', metadata['builder_commit'], '--title', 'Flare Apple Silicon — ' + tag,
+        run('gh', 'release', 'create', tag, '--repo', repo, '--draft',
+            '--target', metadata['builder_commit'], '--title', title,
             '--notes-file', notes)
     names = ['Flare-AppleSilicon.zip', 'Flare-corresponding-source.tar.gz', 'BUILD-INFO.json', 'SHA256SUMS.txt']
     run('gh', 'release', 'upload', tag, '--repo', repo, '--clobber', *(dist / n for n in names))
@@ -66,7 +75,7 @@ def main():
         verify_hashes(Path(td))
         if (Path(td) / 'SHA256SUMS.txt').read_bytes() != (dist / 'SHA256SUMS.txt').read_bytes():
             raise RuntimeError('Remote checksum manifest does not match local manifest')
-    run('gh', 'release', 'edit', tag, '--repo', repo, '--draft=false', '--prerelease', '--notes-file', notes)
+    run('gh', 'release', 'edit', tag, '--repo', repo, '--draft=false', '--prerelease=false', '--latest', '--title', title, '--notes-file', notes)
     if not release_complete(api(f'repos/{repo}/releases/tags/{tag}')):
         raise RuntimeError('Published release verification failed')
     with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as f:
