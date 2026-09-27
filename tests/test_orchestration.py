@@ -9,6 +9,7 @@ from urllib.error import HTTPError
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
 import check_upstream
 import publish
+import verify
 NAMES = ['Flare-AppleSilicon.zip', 'Flare-corresponding-source.tar.gz', 'BUILD-INFO.json', 'SHA256SUMS.txt']
 
 def release(draft=False):
@@ -66,3 +67,10 @@ class ChecksumTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, 'Incomplete'): publish.verify_hashes(p)
 
 if __name__ == '__main__': unittest.main()
+
+class MachOVersionTests(unittest.TestCase):
+    def test_only_os_minimum_versions_are_checked(self):
+        text = "Load command 0\n cmd LC_BUILD_VERSION\n minos 15.0\n sdk 27.0\nLoad command 1\n cmd LC_SOURCE_VERSION\n version 27037.1\nLoad command 2\n cmd LC_ID_DYLIB\n current version 24.0\n"
+        self.assertEqual(verify.minimum_versions(text), ['15.0'])
+    def test_legacy_minimum_version_is_checked(self):
+        self.assertEqual(verify.minimum_versions('Load command 0\n cmd LC_VERSION_MIN_MACOSX\n version 14.0\n sdk 15.0\n'), ['14.0'])

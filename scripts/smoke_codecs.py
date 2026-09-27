@@ -2,6 +2,7 @@
 """Decode real PNG, Ogg and font resources using only bundled libraries."""
 import ctypes as C
 from pathlib import Path
+import os
 import sys
 
 
@@ -14,6 +15,7 @@ def main():
         if len(matches) != 1:
             raise RuntimeError(f'Expected exactly one {name}, got {matches}')
         return C.CDLL(str(matches[0]))
+    os.environ['SDL_AUDIODRIVER'] = 'dummy'
     sdl = load('libSDL2-*.dylib')
     img = load('libSDL2_image-*.dylib')
     mix = load('libSDL2_mixer-*.dylib')
@@ -22,7 +24,8 @@ def main():
     def check(value, label):
         if not value:
             raise RuntimeError(f'{label}: {sdl.SDL_GetError()}')
-    check(sdl.SDL_Init(0) == 0, 'SDL_Init')
+    check(sdl.SDL_Init(0x10) == 0, 'SDL_Init audio')
+    check(mix.Mix_OpenAudio(44100, 0x8010, 2, 1024) == 0, 'Open dummy audio')
     img.IMG_Load.argtypes = [C.c_char_p]
     img.IMG_Load.restype = C.c_void_p
     sdl.SDL_FreeSurface.argtypes = [C.c_void_p]
@@ -45,6 +48,7 @@ def main():
     check(font, 'Font load')
     ttf.TTF_CloseFont(font)
     ttf.TTF_Quit()
+    mix.Mix_CloseAudio()
     mix.Mix_Quit()
     img.IMG_Quit()
     sdl.SDL_Quit()

@@ -17,6 +17,16 @@ def version_tuple(s):
     return tuple(int(n) for n in s.split('.')) + (0,) * (3 - len(s.split('.')))
 
 
+def minimum_versions(commands):
+    versions = []
+    for command in re.split(r'Load command \d+', commands):
+        if re.search(r'cmd LC_BUILD_VERSION\s', command):
+            versions.extend(re.findall(r'^\s*minos (\d+\.\d+(?:\.\d+)?)\s*$', command, re.M))
+        elif re.search(r'cmd LC_VERSION_MIN_MACOSX\s', command):
+            versions.extend(re.findall(r'^\s*version (\d+\.\d+(?:\.\d+)?)\s*$', command, re.M))
+    return versions
+
+
 def verify(app):
     app = app.resolve()
     contents = app / 'Contents'
@@ -29,7 +39,7 @@ def verify(app):
         if output('lipo', '-archs', binary) != 'arm64':
             raise RuntimeError(f'Not exclusively arm64: {binary}')
         commands = output('otool', '-l', binary)
-        versions = re.findall(r'^\s*(?:minos|version) (\d+\.\d+(?:\.\d+)?)\s*$', commands, re.M)
+        versions = minimum_versions(commands)
         if not versions or any(version_tuple(v) > version_tuple(target) for v in versions):
             raise RuntimeError(f'OS target exceeds {target}: {binary}: {versions}')
         deps = [line.strip().split(' (')[0] for line in output('otool', '-L', binary).splitlines()[1:]]
